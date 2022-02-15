@@ -30,12 +30,11 @@ returns Pandas dataframe(s) of the Wind/3DP measurements.
    from wind_3dp_loader import wind3dp_load
    import datetime as dt
 
-   df = wind3dp_load(
-        dataset="WI_SFPD_3DP",
-        starttime=dt.datetime(2021, 4, 16),
-        endtime="2021/04/20",
-        resample="1min",
-        multi_index=True)
+   df = wind3dp_load(dataset="WI_SFPD_3DP",
+                     starttime=dt.datetime(2021, 4, 16),
+                     endtime="2021/04/20",
+                     resample="1min",
+                     multi_index=True)
 
 Input
 ~~~~~

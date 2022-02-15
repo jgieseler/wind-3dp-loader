@@ -1,4 +1,4 @@
-Solar Orbiter MAG Loader Documentation
+Wind 3DP MAG Loader Documentation
 -----------------------------
 
 This is the documentation for wind-3dp-loader.
@@ -17,5 +17,5 @@ This is the documentation for wind-3dp-loader.
 	* :ref:`search`
 
 
-.. autofunction:: wind_3dp_loader.mag_load
+.. autofunction:: wind_3dp_loader.wind3dp_load
 

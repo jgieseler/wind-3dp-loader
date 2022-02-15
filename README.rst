@@ -22,7 +22,7 @@ It can be installed from this repository using pip:
 Usage
 -----
 
-The standard usecase is to utilize the ``3dp_load`` function, which
+The standard usecase is to utilize the ``wind3dp_load`` function, which
 returns Pandas dataframe(s) of the Wind/3DP measurements.
 
 .. code:: python

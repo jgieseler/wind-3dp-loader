@@ -28,6 +28,7 @@ returns Pandas dataframe(s) of the Wind/3DP measurements.
 .. code:: python
 
    from wind_3dp_loader import wind3dp_load
+   import datetime as dt
 
    df = wind3dp_load(
     dataset="WI_SFPD_3DP",

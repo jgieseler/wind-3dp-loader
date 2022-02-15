@@ -1,4 +1,4 @@
-Wind 3DP MAG Loader Documentation
+Wind 3DP Loader Documentation
 -----------------------------
 
 This is the documentation for wind-3dp-loader.

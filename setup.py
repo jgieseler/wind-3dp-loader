@@ -18,7 +18,7 @@ except Exception:
 """.lstrip()
 
 setup(
-    use_scm_version={'write_to': os.path.join('solo_mag_loader', 'version.py'),
+    use_scm_version={'write_to': os.path.join('wind_3dp_loader', 'version.py'),
                      'write_to_template': VERSION_TEMPLATE},
 
 )

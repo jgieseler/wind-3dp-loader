@@ -31,8 +31,8 @@ returns Pandas dataframe(s) of the Wind/3DP measurements.
    import datetime as dt
 
    df = wind3dp_load(dataset="WI_SFPD_3DP",
-                     starttime=dt.datetime(2021, 4, 16),
-                     endtime="2021/04/20",
+                     startdate=dt.datetime(2021, 4, 16),
+                     enddate="2021/04/20",
                      resample="1min",
                      multi_index=True)
 
@@ -40,7 +40,7 @@ Input
 ~~~~~
 
 -  ``dataset``: ``'WI_SFSP_3DP'``, ``'WI_SFPD_3DP'``, ``'WI_SOSP_3DP'``, or ``'WI_SOPD_3DP'``. See above for explanation.
--  ``starttime``, ``endtime``: datetime object or "standard" datetime string
+-  ``startdate``, ``enddate``: datetime object or "standard" datetime string
 -  ``resample``: Pandas frequency (e.g., ``'1min'`` or ``'1h'``), or ``None``, optional. Frequency to which the original data (~24 seconds) is resamepled. By default ``'1min'``.
 -  ``multi_index``: ``True``, or ``False`` (boolean), optional. Provide output for pitch-angle resolved data as Pandas Dataframe with multiindex. By default ``True``.
 

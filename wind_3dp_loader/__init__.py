@@ -7,6 +7,7 @@ except DistributionNotFound:
     pass  # package is not installed
 
 import cdflib
+import datetime as dt
 import numpy as np
 import pandas as pd
 
@@ -162,6 +163,7 @@ def _cdf2df_3d(cdf, index_key, dtimeindex=True, badvalues=None,
 
     return pd.DataFrame(index=index, data=data_dict)
 
+
 def _get_cdf_vars(cdf):
     # Get list of all the variables in an open CDF file
     var_list = []
@@ -183,8 +185,35 @@ def _fillval_nan(data, fillval):
     return data
 
 
-def wind3dp_download(dataset, starttime, endtime, path=None):
-    trange = a.Time(starttime, endtime)
+def wind3dp_download(dataset, startdate, enddate, path=None):
+    """
+    Downloads Wind/3DP CDF files via SunPy/Fido from CDAWeb
+
+    Parameters
+    ----------
+    dataset : {str}
+        Name of Wind/3DP dataset:
+        - 'WI_SFSP_3DP': Electron omnidirectional fluxes 27 keV - 520 keV, often
+            at 24 sec
+        - 'WI_SFPD_3DP': Electron energy-angle distributions 27 keV to 520 keV,
+            often at 24 sec
+        - 'WI_SOSP_3DP': Proton omnidirectional fluxes 70 keV - 6.8 MeV, often
+            at 24 sec
+        - 'WI_SOPD_3DP': Proton energy-angle distributions 70 keV - 6.8 MeV,
+            often at 24 sec
+    startdate, enddate : {datetime or str}
+        Datetime object (e.g., dt.date(2021,12,31) or dt.datetime(2021,4,15)) or
+        "standard" datetime string (e.g., "2021/04/15") (enddate must always be
+        later than startdate)
+    path : {str}, optional
+        Local path for storing downloaded data; not included as of now, by
+        default None
+
+    Returns
+    -------
+    List of downloaded files
+    """
+    trange = a.Time(startdate, enddate)
     cda_dataset = a.cdaweb.Dataset(dataset)
     result = Fido.search(trange, cda_dataset)
     downloaded_files = Fido.fetch(result) # use Fido.fetch(result, path='/ThisIs/MyPath/to/Data/{file}') to use a specific local folder for saving data files
@@ -217,8 +246,44 @@ def _wind3dp_load(files, resample="1min"):
         raise Exception(f"Problem while loading CDF file! Delete downloaded file(s) {files} and try again. Sometimes this is enogh to solve the problem.") 
 
 
-def wind3dp_load(dataset, starttime, endtime, resample="1min", multi_index=True):
-    files = wind3dp_download(dataset, starttime, endtime)
+def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
+                 path=None):
+    """
+    Load-in data for Wind/3DP instrument. Provides released data obtained by
+    SunPy through CDF files from CDAWeb. Returns data as Pandas dataframe.
+
+    Parameters
+    ----------
+    dataset : {str}
+        Name of Wind/3DP dataset:
+        - 'WI_SFSP_3DP': Electron omnidirectional fluxes 27 keV - 520 keV, often
+            at 24 sec
+        - 'WI_SFPD_3DP': Electron energy-angle distributions 27 keV to 520 keV,
+            often at 24 sec
+        - 'WI_SOSP_3DP': Proton omnidirectional fluxes 70 keV - 6.8 MeV, often
+            at 24 sec
+        - 'WI_SOPD_3DP': Proton energy-angle distributions 70 keV - 6.8 MeV,
+            often at 24 sec
+    startdate, enddate : {datetime or str}
+        Datetime object (e.g., dt.date(2021,12,31) or dt.datetime(2021,4,15)) or
+        "standard" datetime string (e.g., "2021/04/15") (enddate must always be
+        later than startdate)
+    resample : {str}, optional
+        Frequency to which the original data (~24 seconds) is resamepled. Pandas
+        frequency (e.g., '1min' or '1h') or None, by default "1min"
+    multi_index : {bool}, optional
+        Provide output for pitch-angle resolved data as Pandas Dataframe with
+        multiindex, by default True
+    path : {str}, optional
+        Local path for storing downloaded data; not included as of now, by
+        default None
+
+    Returns
+    -------
+    _type_
+        _description_
+    """    
+    files = wind3dp_download(dataset, startdate, enddate)
     df = _wind3dp_load(files, resample)
 
     # create multi-index data frame of flux
@@ -238,20 +303,3 @@ def wind3dp_load(dataset, starttime, endtime, resample="1min", multi_index=True)
             print('')
             print('Multi-index function only available (and necessary) for pitch-angle resolved fluxes. Skipping.')
     return df
-        
-
-"""
-def wind3dp_load_single(file):
-    cdf = cdflib.CDF(file)
-    df = _cdf2df_3d(cdf, "Epoch")
-    df = df.resample("60s").mean()
-    df.index = df.index + pd.tseries.frequencies.to_offset("30s")
-    return df
-
-
-def wind3dp_load(dataset, starttime, endtime, resample="1min"):
-    files = wind3dp_download(dataset, starttime, endtime)
-    df = _wind3dp_load(files, resample)
-    return df
-"""
-

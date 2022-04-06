@@ -243,7 +243,7 @@ def _wind3dp_load(files, resample="1min"):
             df.index = df.index + pd.tseries.frequencies.to_offset(pd.Timedelta(resample)/2)
         return df
     except:
-        raise Exception(f"Problem while loading CDF file! Delete downloaded file(s) {files} and try again. Sometimes this is enogh to solve the problem.") 
+        raise Exception(f"Problem while loading CDF file! Delete downloaded file(s) {files} and try again. Sometimes this is enough to solve the problem.") 
 
 
 def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,

@@ -238,6 +238,10 @@ def _wind3dp_load(files, resample="1min"):
                 cdf = cdflib.CDF(f)
                 t_df = _cdf2df_3d(cdf, "Epoch")
                 df = pd.concat([df, t_df])
+        
+        # replace bad data with np.nan:
+        df = df.replace(-np.inf, np.nan)
+
         if isinstance(resample, str):
             df = df.resample(resample).mean()
             df.index = df.index + pd.tseries.frequencies.to_offset(pd.Timedelta(resample)/2)

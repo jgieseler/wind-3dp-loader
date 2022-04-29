@@ -206,8 +206,7 @@ def wind3dp_download(dataset, startdate, enddate, path=None):
         "standard" datetime string (e.g., "2021/04/15") (enddate must always be
         later than startdate)
     path : {str}, optional
-        Local path for storing downloaded data; not included as of now, by
-        default None
+        Local path for storing downloaded data, by default None
 
     Returns
     -------
@@ -216,7 +215,7 @@ def wind3dp_download(dataset, startdate, enddate, path=None):
     trange = a.Time(startdate, enddate)
     cda_dataset = a.cdaweb.Dataset(dataset)
     result = Fido.search(trange, cda_dataset)
-    downloaded_files = Fido.fetch(result) # use Fido.fetch(result, path='/ThisIs/MyPath/to/Data/{file}') to use a specific local folder for saving data files
+    downloaded_files = Fido.fetch(result, path=path)
     downloaded_files.sort()
     return downloaded_files
 
@@ -279,15 +278,14 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
         Provide output for pitch-angle resolved data as Pandas Dataframe with
         multiindex, by default True
     path : {str}, optional
-        Local path for storing downloaded data; not included as of now, by
-        default None
+        Local path for storing downloaded data, by default None
 
     Returns
     -------
     _type_
         _description_
     """    
-    files = wind3dp_download(dataset, startdate, enddate)
+    files = wind3dp_download(dataset, startdate, enddate, path)
     df = _wind3dp_load(files, resample)
 
     # create multi-index data frame of flux

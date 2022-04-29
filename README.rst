@@ -34,7 +34,8 @@ returns Pandas dataframe(s) of the Wind/3DP measurements.
                      startdate=dt.datetime(2021, 4, 16),
                      enddate="2021/04/20",
                      resample="1min",
-                     multi_index=True)
+                     multi_index=True,
+                     path=None)
 
 Input
 ~~~~~
@@ -43,6 +44,7 @@ Input
 -  ``startdate``, ``enddate``: datetime object or "standard" datetime string
 -  ``resample``: Pandas frequency (e.g., ``'1min'`` or ``'1h'``), or ``None``, optional. Frequency to which the original data (~24 seconds) is resamepled. By default ``'1min'``.
 -  ``multi_index``: ``True``, or ``False`` (boolean), optional. Provide output for pitch-angle resolved data as Pandas Dataframe with multiindex. By default ``True``.
+-  ``path``: String, optional. Local path for storing downloaded data, e.g. ``path='data/wind/3dp/'``. By default `None`. Default setting saves data according to `sunpy's Fido standards <https://docs.sunpy.org/en/stable/guide/acquiring_data/fido.html#downloading-data>`_.
 
 Return
 ~~~~~~

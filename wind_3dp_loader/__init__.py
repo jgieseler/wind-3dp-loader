@@ -185,7 +185,7 @@ def _fillval_nan(data, fillval):
     return data
 
 
-def wind3dp_download(dataset, startdate, enddate, path=None, **kwargs):
+def wind3dp_download(dataset, startdate, enddate, path=None, max_conn=5):
     """
     Downloads Wind/3DP CDF files via SunPy/Fido from CDAWeb
 
@@ -215,7 +215,7 @@ def wind3dp_download(dataset, startdate, enddate, path=None, **kwargs):
     trange = a.Time(startdate, enddate)
     cda_dataset = a.cdaweb.Dataset(dataset)
     result = Fido.search(trange, cda_dataset)
-    downloaded_files = Fido.fetch(result, path=path)
+    downloaded_files = Fido.fetch(result, path=path, max_conn=max_conn)
     downloaded_files.sort()
     return downloaded_files
 
@@ -250,7 +250,7 @@ def _wind3dp_load(files, resample="1min"):
 
 
 def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
-                 path=None, **kwargs):
+                 path=None, max_conn=5):
     """
     Load-in data for Wind/3DP instrument. Provides released data obtained by
     SunPy through CDF files from CDAWeb. Returns data as Pandas dataframe.
@@ -285,7 +285,7 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
     _type_
         _description_
     """
-    files = wind3dp_download(dataset, startdate, enddate, path, **kwargs)
+    files = wind3dp_download(dataset, startdate, enddate, path, max_conn)
     df = _wind3dp_load(files, resample)
 
     # create multi-index data frame of flux

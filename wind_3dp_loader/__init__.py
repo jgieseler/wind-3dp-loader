@@ -23,7 +23,7 @@ def _date2str(date):
 
 
 def _cdf2df_3d(cdf, index_key, dtimeindex=True, badvalues=None,
-            ignore=None, include=None):
+               ignore=None, include=None):
     """
     Converts a cdf file to a pandas dataframe.
     Note that this only works for 1 dimensional data, other data such as
@@ -156,10 +156,10 @@ def _cdf2df_3d(cdf, index_key, dtimeindex=True, badvalues=None,
                     data_dict[f'{df_key}_{i}'] = data
             elif ndims == 3:
                 for i in range(key_shape[2]):
-                    for j in range(key_shape[1]): 
-                       data = vars[cdf_key][...][:, j, i]
-                       data = _fillval_nan(data, fillval)
-                       data_dict[f'{df_key}_E{i}_P{j}'] = data
+                    for j in range(key_shape[1]):
+                        data = vars[cdf_key][...][:, j, i]
+                        data = _fillval_nan(data, fillval)
+                        data_dict[f'{df_key}_E{i}_P{j}'] = data
 
     return pd.DataFrame(index=index, data=data_dict)
 
@@ -185,7 +185,7 @@ def _fillval_nan(data, fillval):
     return data
 
 
-def wind3dp_download(dataset, startdate, enddate, path=None):
+def wind3dp_download(dataset, startdate, enddate, path=None, **kwargs):
     """
     Downloads Wind/3DP CDF files via SunPy/Fido from CDAWeb
 
@@ -225,7 +225,7 @@ def _wind3dp_load(files, resample="1min"):
         try:
             _ = pd.Timedelta(resample)
         except ValueError:
-            raise Warning(f"Your 'resample' option of [{resample}] doesn't seem to be a proper Pandas frequency!") 
+            raise Warning(f"Your 'resample' option of [{resample}] doesn't seem to be a proper Pandas frequency!")
     try:
         # read 0th cdf file
         cdf = cdflib.CDF(files[0])
@@ -237,7 +237,7 @@ def _wind3dp_load(files, resample="1min"):
                 cdf = cdflib.CDF(f)
                 t_df = _cdf2df_3d(cdf, "Epoch")
                 df = pd.concat([df, t_df])
-        
+
         # replace bad data with np.nan:
         df = df.replace(-np.inf, np.nan)
 
@@ -246,11 +246,11 @@ def _wind3dp_load(files, resample="1min"):
             df.index = df.index + pd.tseries.frequencies.to_offset(pd.Timedelta(resample)/2)
         return df
     except:
-        raise Exception(f"Problem while loading CDF file! Delete downloaded file(s) {files} and try again. Sometimes this is enough to solve the problem.") 
+        raise Exception(f"Problem while loading CDF file! Delete downloaded file(s) {files} and try again. Sometimes this is enough to solve the problem.")
 
 
 def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
-                 path=None):
+                 path=None, **kwargs):
     """
     Load-in data for Wind/3DP instrument. Provides released data obtained by
     SunPy through CDF files from CDAWeb. Returns data as Pandas dataframe.
@@ -284,8 +284,8 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
     -------
     _type_
         _description_
-    """    
-    files = wind3dp_download(dataset, startdate, enddate, path)
+    """
+    files = wind3dp_download(dataset, startdate, enddate, path, **kwargs)
     df = _wind3dp_load(files, resample)
 
     # create multi-index data frame of flux
@@ -293,8 +293,7 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
         if dataset == 'WI_SFPD_3DP' or dataset == 'WI_SOPD_3DP':
             no_channels = len(df[df.columns[df.columns.str.startswith("ENERGY")]].columns)
             t_df = [''] * no_channels
-            multi_keys = np.append( 
-                                   [f"FLUX_E{i}" for i in range(no_channels)],
+            multi_keys = np.append([f"FLUX_E{i}" for i in range(no_channels)],
                                    df.drop(df.columns[df.columns.str.startswith(f"FLUX_")], axis=1).columns,
                                    )
             for i in range(no_channels):

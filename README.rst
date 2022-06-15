@@ -8,6 +8,10 @@ Python data loader for Wind/3DP instrument. At the moment provides released data
 - WI_SOSP_3DP: Proton omnidirectional fluxes 70 keV - 6.8 MeV, often at 24 sec
 - WI_SOPD_3DP: Proton energy-angle distributions 70 keV - 6.8 MeV, often at 24 sec
 
+Disclaimer
+----------
+This software is provided "as is", with no guarantee. It is no official data source, and not officially endorsed by the corresponding instrument teams. Please always refer to the instrument descriptions before using the data!
+
 Installation
 ------------
 

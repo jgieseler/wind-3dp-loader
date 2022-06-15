@@ -207,6 +207,8 @@ def wind3dp_download(dataset, startdate, enddate, path=None, max_conn=5):
         later than startdate)
     path : {str}, optional
         Local path for storing downloaded data, by default None
+    max_conn : {int}, optional
+        The number of parallel download slots used by Fido.fetch, by default 5
 
     Returns
     -------
@@ -279,6 +281,8 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
         multiindex, by default True
     path : {str}, optional
         Local path for storing downloaded data, by default None
+    max_conn : {int}, optional
+        The number of parallel download slots used by Fido.fetch, by default 5
 
     Returns
     -------

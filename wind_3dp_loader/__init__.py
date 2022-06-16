@@ -243,27 +243,27 @@ def _wind3dp_load(files, resample="1min"):
             _ = pd.Timedelta(resample)
         except ValueError:
             raise Warning(f"Your 'resample' option of [{resample}] doesn't seem to be a proper Pandas frequency!")
-    try:
-        # read 0th cdf file
-        cdf = cdflib.CDF(files[0])
-        df = _cdf2df_3d(cdf, "Epoch")
+    # try:
+    # read 0th cdf file
+    cdf = cdflib.CDF(files[0])
+    df = _cdf2df_3d(cdf, "Epoch")
 
-        # read additional cdf files
-        if len(files) > 1:
-            for f in files[1:]:
-                cdf = cdflib.CDF(f)
-                t_df = _cdf2df_3d(cdf, "Epoch")
-                df = pd.concat([df, t_df])
+    # read additional cdf files
+    if len(files) > 1:
+        for f in files[1:]:
+            cdf = cdflib.CDF(f)
+            t_df = _cdf2df_3d(cdf, "Epoch")
+            df = pd.concat([df, t_df])
 
-        # replace bad data with np.nan:
-        df = df.replace(-np.inf, np.nan)
+    # replace bad data with np.nan:
+    df = df.replace(-np.inf, np.nan)
 
-        if isinstance(resample, str):
-            df = df.resample(resample).mean()
-            df.index = df.index + pd.tseries.frequencies.to_offset(pd.Timedelta(resample)/2)
-        return df
-    except:
-        raise Exception(f"Problem while loading CDF file! Delete downloaded file(s) {files} and try again. Sometimes this is enough to solve the problem.")
+    if isinstance(resample, str):
+        df = df.resample(resample).mean()
+        df.index = df.index + pd.tseries.frequencies.to_offset(pd.Timedelta(resample)/2)
+    return df
+    # except:
+    #     raise Exception(f"Problem while loading CDF file! Delete downloaded file(s) {files} and try again. Sometimes this is enough to solve the problem.")
 
 
 def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,

@@ -229,7 +229,7 @@ def wind3dp_download(dataset, startdate, enddate, path=None, max_conn=5):
 
     for i, f in enumerate(filelist):
         if not os.path.exists(f):
-            downloaded_file = Fido.fetch(result[i], path=path, max_conn=max_conn)
+            downloaded_file = Fido.fetch(result[0][i], path=path, max_conn=max_conn)
     # downloaded_files = Fido.fetch(result, path=path, max_conn=max_conn)
     # downloaded_files.sort()
     return downloaded_files

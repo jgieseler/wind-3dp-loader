@@ -9,12 +9,12 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'wind-3pd-loader'
+project = 'wind-3dp-loader'
 copyright = '2022, Jan Gieseler'
 author = 'Jan Gieseler'
 
 # The full version, including alpha/beta/rc tags
-from wind_3pd_loader import __version__
+from wind_3dp_loader import __version__
 release = __version__
 
 # -- General configuration ---------------------------------------------------

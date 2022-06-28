@@ -1,15 +1,8 @@
 wind-3dp-loader
 ===============
 
-|pypi Version| |conda version| |license| |python version| |pytesting|
+|pytesting|
 
-.. |pypi Version| image:: https://img.shields.io/pypi/v/wind-3dp-loader?style=flat&logo=pypi
-   :target: https://pypi.org/project/wind-3dp-loader/
-.. |conda version| image:: https://img.shields.io/conda/vn/conda-forge/wind-3dp-loader?style=flat&logo=anaconda
-   :target: https://anaconda.org/conda-forge/wind-3dp-loader/
-.. |license| image:: https://img.shields.io/conda/l/conda-forge/wind-3dp-loader?style=flat
-   :target: https://github.com/jgieseler/wind-3dp-loader/blob/main/LICENSE.rst
-.. |python version| image:: https://img.shields.io/pypi/pyversions/wind-3dp-loader?style=flat&logo=python
 .. |pytesting| image:: https://github.com/jgieseler/wind-3dp-loader/workflows/pytesting/badge.svg
 
 Python data loader for Wind/3DP instrument. At the moment provides released data obtained by SunPy through CDF files from CDAWeb for the following datasets:

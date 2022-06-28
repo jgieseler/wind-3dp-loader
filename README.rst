@@ -47,12 +47,12 @@ returns Pandas dataframe(s) of the Wind/3DP measurements.
    from wind_3dp_loader import wind3dp_load
    import datetime as dt
 
-   df = wind3dp_load(dataset="WI_SFPD_3DP",
-                     startdate=dt.datetime(2021, 4, 16),
-                     enddate="2021/04/20",
-                     resample="1min",
-                     multi_index=True,
-                     path=None)
+   df, meta = wind3dp_load(dataset="WI_SFPD_3DP",
+                           startdate=dt.datetime(2021, 4, 16),
+                           enddate="2021/04/20",
+                           resample="1min",
+                           multi_index=True,
+                           path=None)
 
 Input
 ~~~~~
@@ -68,6 +68,7 @@ Return
 ~~~~~~
 
 -  Pandas data frame, optional multiindex for pitch-angle resolved fluxes. Energies are given in ``eV``, differential intensities in ``cm-2 s-1 sr-1 eV-1``
+-  Metadata (empty add the moment)
 
 
 Data folder structure

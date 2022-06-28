@@ -12,6 +12,7 @@ import numpy as np
 import os
 import pandas as pd
 import sunpy
+import warnings
 
 from sunpy.net import Fido
 from sunpy.net import attrs as a
@@ -318,8 +319,8 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
                 no_channels = len(df[df.columns[df.columns.str.startswith("ENERGY")]].columns)
                 t_df = [''] * no_channels
                 multi_keys = np.append([f"FLUX_E{i}" for i in range(no_channels)],
-                                    df.drop(df.columns[df.columns.str.startswith(f"FLUX_")], axis=1).columns,
-                                    )
+                                       df.drop(df.columns[df.columns.str.startswith(f"FLUX_")], axis=1).columns,
+                                       )
                 for i in range(no_channels):
                     t_df[i] = df[df.columns[df.columns.str.startswith(f"FLUX_E{i}")]]
                 t_df.extend([df[col] for col in df.drop(df.columns[df.columns.str.startswith(f"FLUX_")], axis=1).columns.values])
@@ -329,4 +330,5 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
                 print('Multi-index function only available (and necessary) for pitch-angle resolved fluxes. Skipping.')
     else:
         df = []
-    return df
+    meta = ''
+    return df, meta

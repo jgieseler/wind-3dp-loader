@@ -69,7 +69,7 @@ def _cdf2df_3d(cdf, index_key, dtimeindex=True, badvalues=None,
     # Extract index values
     index_info = cdf.varinq(index_key)
     if index_info['Last_Rec'] == -1:
-        raise CDFEmptyError('No records present in CDF file')
+        warnings.warn('No records present in CDF file')
 
     index = cdf.varget(index_key)
     try:

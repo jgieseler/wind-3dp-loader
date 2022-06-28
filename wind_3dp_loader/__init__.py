@@ -218,22 +218,26 @@ def wind3dp_download(dataset, startdate, enddate, path=None, max_conn=5):
     """
     trange = a.Time(startdate, enddate)
     cda_dataset = a.cdaweb.Dataset(dataset)
-    result = Fido.search(trange, cda_dataset)
-    filelist = [i[0].split('/')[-1] for i in result.show('URL')[0]]
-    filelist.sort()
-    if path is None:
-        filelist = [sunpy.config.get('downloads', 'download_dir') + os.sep + file for file in filelist]
-    elif type(path) is str:
-        filelist = [path + os.sep + f for f in filelist]
-    downloaded_files = filelist
+    try:
+        result = Fido.search(trange, cda_dataset)
+        filelist = [i[0].split('/')[-1] for i in result.show('URL')[0]]
+        filelist.sort()
+        if path is None:
+            filelist = [sunpy.config.get('downloads', 'download_dir') + os.sep + file for file in filelist]
+        elif type(path) is str:
+            filelist = [path + os.sep + f for f in filelist]
+        downloaded_files = filelist
 
-    for i, f in enumerate(filelist):
-        if os.path.exists(f) and os.path.getsize(f) == 0:
-            os.remove(f)
-        if not os.path.exists(f):
-            downloaded_file = Fido.fetch(result[0][i], path=path, max_conn=max_conn)
-    # downloaded_files = Fido.fetch(result, path=path, max_conn=max_conn)
-    # downloaded_files.sort()
+        for i, f in enumerate(filelist):
+            if os.path.exists(f) and os.path.getsize(f) == 0:
+                os.remove(f)
+            if not os.path.exists(f):
+                downloaded_file = Fido.fetch(result[0][i], path=path, max_conn=max_conn)
+        # downloaded_files = Fido.fetch(result, path=path, max_conn=max_conn)
+        # downloaded_files.sort()
+    except RuntimeError:
+        print(f'Unable to obtain "{dataset}" data for {startdate}-{enddate}!')
+        downloaded_files = []
     return downloaded_files
 
 
@@ -305,21 +309,24 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
         _description_
     """
     files = wind3dp_download(dataset, startdate, enddate, path, max_conn)
-    df = _wind3dp_load(files, resample)
+    if len(files) > 0:
+        df = _wind3dp_load(files, resample)
 
-    # create multi-index data frame of flux
-    if multi_index:
-        if dataset == 'WI_SFPD_3DP' or dataset == 'WI_SOPD_3DP':
-            no_channels = len(df[df.columns[df.columns.str.startswith("ENERGY")]].columns)
-            t_df = [''] * no_channels
-            multi_keys = np.append([f"FLUX_E{i}" for i in range(no_channels)],
-                                   df.drop(df.columns[df.columns.str.startswith(f"FLUX_")], axis=1).columns,
-                                   )
-            for i in range(no_channels):
-                t_df[i] = df[df.columns[df.columns.str.startswith(f"FLUX_E{i}")]]
-            t_df.extend([df[col] for col in df.drop(df.columns[df.columns.str.startswith(f"FLUX_")], axis=1).columns.values])
-            df = pd.concat(t_df, axis=1, keys=multi_keys)
-        else:
-            print('')
-            print('Multi-index function only available (and necessary) for pitch-angle resolved fluxes. Skipping.')
+        # create multi-index data frame of flux
+        if multi_index:
+            if dataset == 'WI_SFPD_3DP' or dataset == 'WI_SOPD_3DP':
+                no_channels = len(df[df.columns[df.columns.str.startswith("ENERGY")]].columns)
+                t_df = [''] * no_channels
+                multi_keys = np.append([f"FLUX_E{i}" for i in range(no_channels)],
+                                    df.drop(df.columns[df.columns.str.startswith(f"FLUX_")], axis=1).columns,
+                                    )
+                for i in range(no_channels):
+                    t_df[i] = df[df.columns[df.columns.str.startswith(f"FLUX_E{i}")]]
+                t_df.extend([df[col] for col in df.drop(df.columns[df.columns.str.startswith(f"FLUX_")], axis=1).columns.values])
+                df = pd.concat(t_df, axis=1, keys=multi_keys)
+            else:
+                print('')
+                print('Multi-index function only available (and necessary) for pitch-angle resolved fluxes. Skipping.')
+    else:
+        df = []
     return df

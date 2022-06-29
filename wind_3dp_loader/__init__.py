@@ -313,6 +313,8 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
     if len(files) > 0:
         df = _wind3dp_load(files, resample)
 
+        meta = {'ENERGY': df.filter(like='ENERGY_').mean()}
+
         # create multi-index data frame of flux
         if multi_index:
             if dataset == 'WI_SFPD_3DP' or dataset == 'WI_SOPD_3DP':
@@ -330,5 +332,6 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
                 print('Multi-index function only available (and necessary) for pitch-angle resolved fluxes. Skipping.')
     else:
         df = []
+        meta = ''
     meta = ''
     return df, meta

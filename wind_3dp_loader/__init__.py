@@ -333,5 +333,4 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
     else:
         df = []
         meta = ''
-    meta = ''
     return df, meta

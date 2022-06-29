@@ -7,10 +7,10 @@ wind-3dp-loader
 
 Python data loader for Wind/3DP instrument. At the moment provides released data obtained by SunPy through CDF files from CDAWeb for the following datasets:
 
-- WI_SFSP_3DP: Electron omnidirectional fluxes 27 keV - 520 keV, often at 24 sec
-- WI_SFPD_3DP: Electron energy-angle distributions 27 keV to 520 keV, often at 24 sec
-- WI_SOSP_3DP: Proton omnidirectional fluxes 70 keV - 6.8 MeV, often at 24 sec
-- WI_SOPD_3DP: Proton energy-angle distributions 70 keV - 6.8 MeV, often at 24 sec
+- WI_SFSP_3DP: Electron omnidirectional fluxes 27 keV - 520 keV, often at 24 sec (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesW.html#WI_SFSP_3DP>`_, `Metadata <https://cdaweb.gsfc.nasa.gov/pub/software/cdawlib/0SKELTABLES/wi_sfsp_3dp_00000000_v01.skt>`_)
+- WI_SFPD_3DP: Electron energy-angle distributions 27 keV to 520 keV, often at 24 sec (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesW.html#WI_SFPD_3DP>`_, `Metadata <https://cdaweb.gsfc.nasa.gov/pub/software/cdawlib/0SKELTABLES/wi_sfpd_3dp_00000000_v01.skt>`_)
+- WI_SOSP_3DP: Proton omnidirectional fluxes 70 keV - 6.8 MeV, often at 24 sec (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesW.html#WI_SOSP_3DP>`_, `Metadata <https://cdaweb.gsfc.nasa.gov/pub/software/cdawlib/0SKELTABLES/wi_sosp_3dp_00000000_v01.skt>`_)
+- WI_SOPD_3DP: Proton energy-angle distributions 70 keV - 6.8 MeV, often at 24 sec (`Info <https://cdaweb.gsfc.nasa.gov/misc/NotesW.html#WI_SOPD_3DP>`_, `Metadata <https://cdaweb.gsfc.nasa.gov/pub/software/cdawlib/0SKELTABLES/wi_sopd_3dp_00000000_v01.skt>`_)
 
 Disclaimer
 ----------
@@ -19,7 +19,7 @@ This software is provided "as is", with no guarantee. It is no official data sou
 Installation
 ------------
 
-wind_3dp_loader requires python >= 3.6 and SunPy >= 3.1.3
+wind_3dp_loader requires python >= 3.7 and SunPy >= 4.0.0
 
 It can be installed from this repository using pip:
 
@@ -60,14 +60,14 @@ Input
 Return
 ~~~~~~
 
--  Pandas data frame, optional multiindex for pitch-angle resolved fluxes. Energies are given in ``eV``, differential intensities in ``cm-2 s-1 sr-1 eV-1``
--  Metadata (empty add the moment)
+-  Pandas data frame, optional multiindex for pitch-angle resolved fluxes. Energies are given in ``eV``, differential intensities in ``cm-2 s-1 sr-1 eV-1``. See info links above for the different datasets for a description of the dataframe columns.
+-  Dictionary of metadata (e.g., energy channels; empty add the moment). 
 
 
 Data folder structure
 ---------------------
 
-All data files are automatically saved in a SunPy subfolder of the current user home directory.
+If no ``path`` argument is provided, all data files are automatically saved in a SunPy subfolder of the current user home directory.
 
 
 License

@@ -11,6 +11,7 @@ import datetime as dt
 import numpy as np
 import os
 import pandas as pd
+import pooch
 import sunpy
 import warnings
 
@@ -188,6 +189,22 @@ def _fillval_nan(data, fillval):
     return data
 
 
+def _download_metafile(dataset, path=None):
+     """
+     Download master cdf file from cdaweb for 'dataset'
+     """
+     if not path:
+         path = sunpy.config.get('downloads', 'sample_dir')
+     base_url = 'https://spdf.gsfc.nasa.gov/pub/software/cdawlib/0MASTERS/'
+     fname = dataset.lower() + '_00000000_v01.cdf'
+     url = base_url + fname
+     try:
+         downloaded_file = pooch.retrieve(url=url, known_hash=None, fname=fname, path=path, progressbar=True)
+     except ModuleNotFoundError:
+         downloaded_file = pooch.retrieve(url=url, known_hash=None, fname=fname, path=path, progressbar=False)
+     return downloaded_file
+
+
 def wind3dp_download(dataset, startdate, enddate, path=None, max_conn=5):
     """
     Downloads Wind/3DP CDF files via SunPy/Fido from CDAWeb
@@ -313,7 +330,19 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
     if len(files) > 0:
         df = _wind3dp_load(files, resample)
 
-        meta = {'ENERGY': df.filter(like='ENERGY_').mean()}
+        # download master file from CDAWeb
+        path_to_metafile = _download_metafile(dataset, path=path)
+
+        # open master file from CDAWeb as cdf
+        metacdf = cdflib.CDF(path_to_metafile)
+
+        meta = {'CALCULATED_MEAN_ENERGY': df.filter(like='ENERGY_').mean(),
+                'APPROX_ENERGY_LABELS': metacdf.varget('APPROX_ENERGY_LABELS'),
+                'ENERGY_UNITS': metacdf.varattsget('ENERGY')['UNITS'],
+                'FLUX_UNITS': metacdf.varattsget('FLUX')['UNITS'],
+                'FLUX_FILLVAL': metacdf.varattsget('FLUX')['FILLVAL'],
+                'FLUX_LABELS': metacdf.varget('FLUX_ENERGY_LABL'),
+                }
 
         # create multi-index data frame of flux
         if multi_index:

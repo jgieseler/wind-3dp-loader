@@ -282,8 +282,15 @@ def _wind3dp_load(files, resample="1min", threshold=None):
 
     # replace outlier data points above given threshold with np.nan
     # note: df.where(cond, np.nan) replaces all values where the cond is NOT fullfilled with np.nan
+    # following Pandas Dataframe work is not too elegant, but works...
     if threshold:
-        df.filter(like='FLUX_').where(df.filter(like='FLUX_') <= threshold, np.nan, inplace=True)
+        # create new dataframe of FLUX columns only with removed outliers
+        df2 = df.filter(like='FLUX_').where(df.filter(like='FLUX_') <= threshold, np.nan)
+        # drop these FLUX columns from original dataframe
+        flux_cols = df.filter(like='FLUX_').columns
+        df.drop(labels=flux_cols, axis=1, inplace=True)
+        # add cleaned new FLUX columns to original dataframe
+        df = pd.concat([df2, df], axis=1)
 
     if isinstance(resample, str):
         df = df.resample(resample).mean()

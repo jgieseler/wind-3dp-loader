@@ -283,7 +283,7 @@ def _wind3dp_load(files, resample="1min", threshold=None):
     # replace outlier data points above given threshold with np.nan
     # note: df.where(cond, np.nan) replaces all values where the cond is NOT fullfilled with np.nan
     if threshold:
-        df = df.where(df.filter(like='FLUX_') <= threshold, np.nan)
+        df.filter(like='FLUX_').where(df.filter(like='FLUX_') <= threshold, np.nan, inplace=True)
 
     if isinstance(resample, str):
         df = df.resample(resample).mean()

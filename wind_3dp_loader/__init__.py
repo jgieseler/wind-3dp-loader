@@ -336,7 +336,16 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
         # open master file from CDAWeb as cdf
         metacdf = cdflib.CDF(path_to_metafile)
 
-        meta = {'CALCULATED_MEAN_ENERGY': df.filter(like='ENERGY_').mean(),
+        e_mean = df.filter(like='ENERGY_').mean()
+        # ∼30% ΔE/E => ΔE = 0.3*E
+        # from Table 3 of Wilson et al. 2021, https://doi.org/10.1029/2020RG000714
+        delta_e = 0.3 * e_mean
+        e_low = e_mean - delta_e
+        e_high = e_mean + delta_e
+        energies = pd.concat([e_mean, delta_e, e_low, e_high], axis=1, keys=['mean_E', 'DE', 'lower_E', 'upper_E'])
+        energies['Bins_Text']= np.around(e_low/1e3, 2).astype('string') +' - '+ np.around(e_high/1e3, 2).astype('string') + ' keV'
+
+        meta = {'channels_dict_df': energies,
                 'APPROX_ENERGY_LABELS': metacdf.varget('APPROX_ENERGY_LABELS'),
                 'ENERGY_UNITS': metacdf.varattsget('ENERGY')['UNITS'],
                 'FLUX_UNITS': metacdf.varattsget('FLUX')['UNITS'],

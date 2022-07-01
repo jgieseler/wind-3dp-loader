@@ -259,7 +259,7 @@ def wind3dp_download(dataset, startdate, enddate, path=None, max_conn=5):
     return downloaded_files
 
 
-def _wind3dp_load(files, resample="1min"):
+def _wind3dp_load(files, resample="1min", threshold=None):
     if isinstance(resample, str):
         try:
             _ = pd.Timedelta(resample)
@@ -280,6 +280,11 @@ def _wind3dp_load(files, resample="1min"):
     # replace bad data with np.nan:
     df = df.replace(-np.inf, np.nan)
 
+    # replace outlier data points above given threshold with np.nan
+    # note: df.where(cond, np.nan) replaces all values where the cond is NOT fullfilled with np.nan
+    if threshold:
+        df = df.filter(like='FLUX_').where(df.filter(like='FLUX_') <= threshold, np.nan)
+
     if isinstance(resample, str):
         df = df.resample(resample).mean()
         df.index = df.index + pd.tseries.frequencies.to_offset(pd.Timedelta(resample)/2)
@@ -289,7 +294,7 @@ def _wind3dp_load(files, resample="1min"):
 
 
 def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
-                 path=None, max_conn=5):
+                 path=None, max_conn=5, threshold=None):
     """
     Load-in data for Wind/3DP instrument. Provides released data obtained by
     SunPy through CDF files from CDAWeb. Returns data as Pandas dataframe.
@@ -320,6 +325,8 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
         Local path for storing downloaded data, by default None
     max_conn : {int}, optional
         The number of parallel download slots used by Fido.fetch, by default 5
+    threshold : {int or float}, optional
+        Replace all FLUX values above 'threshold' with np.nan, by default None
 
     Returns
     -------
@@ -328,7 +335,7 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
     """
     files = wind3dp_download(dataset, startdate, enddate, path, max_conn)
     if len(files) > 0:
-        df = _wind3dp_load(files, resample)
+        df = _wind3dp_load(files, resample, threshold)
 
         # download master file from CDAWeb
         path_to_metafile = _download_metafile(dataset, path=path)

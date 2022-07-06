@@ -12,6 +12,7 @@ import numpy as np
 import os
 import pandas as pd
 import pooch
+import requests
 import sunpy
 import warnings
 
@@ -291,7 +292,7 @@ def wind3dp_single_download(file, path=None):
     except ModuleNotFoundError:
         downloaded_file = pooch.retrieve(url=url, known_hash=None, fname=file, path=path, progressbar=False)
     except requests.HTTPError:
-        print(f'No corresponding SEPT data found at {url}')
+        print(f'No corresponding data found at {url}')
         downloaded_file = []
 
     return downloaded_file

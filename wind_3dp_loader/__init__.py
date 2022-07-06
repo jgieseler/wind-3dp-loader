@@ -205,7 +205,7 @@ def _download_metafile(dataset, path=None):
     return downloaded_file
 
 
-def wind3dp_download(dataset, startdate, enddate, path=None, max_conn=5):
+def wind3dp_download_fido(dataset, startdate, enddate, path=None, max_conn=5):
     """
     Downloads Wind/3DP CDF files via SunPy/Fido from CDAWeb
 
@@ -259,6 +259,98 @@ def wind3dp_download(dataset, startdate, enddate, path=None, max_conn=5):
     return downloaded_files
 
 
+def wind3dp_single_download(file, path=None):
+    """
+    Download a single Wind/3DP level 2 data file from SRL Berkeley to local path
+
+    Parameters
+    ----------
+    file : str
+        file to be downloaded, e.g. 'wi_sfsp_3dp_20220602_v01.cdf'
+    path : str
+        local path where the files will be stored
+    Returns
+    -------
+    downloaded_file : str
+        full local path to downloaded file
+    """
+
+    # add a OS-specific '/' to end end of 'path'
+    if path:
+        if not path[-1] == os.sep:
+            path = f'{path}{os.sep}'
+
+    data = file.split('_')[1]  # e.g. 'sfsp'
+    year = file.split('_')[3][:4]
+    base = f"https://sprg.ssl.berkeley.edu/wind3dp/data/wi/3dp/{data}/{year}/"
+
+    url = base+'/'+file
+
+    try:
+        downloaded_file = pooch.retrieve(url=url, known_hash=None, fname=file, path=path, progressbar=True)
+    except ModuleNotFoundError:
+        downloaded_file = pooch.retrieve(url=url, known_hash=None, fname=file, path=path, progressbar=False)
+    except requests.HTTPError:
+        print(f'No corresponding SEPT data found at {url}')
+        downloaded_file = []
+
+    return downloaded_file
+
+
+def wind3dp_download(dataset, startdate, enddate, path=None, **kwargs):
+    """
+    Downloads Wind/3DP CDF files via SunPy/Fido from CDAWeb
+
+    Parameters
+    ----------
+    dataset : {str}
+        Name of Wind/3DP dataset:
+        - 'WI_SFSP_3DP': Electron omnidirectional fluxes 27 keV - 520 keV, often
+            at 24 sec
+        - 'WI_SFPD_3DP': Electron energy-angle distributions 27 keV to 520 keV,
+            often at 24 sec
+        - 'WI_SOSP_3DP': Proton omnidirectional fluxes 70 keV - 6.8 MeV, often
+            at 24 sec
+        - 'WI_SOPD_3DP': Proton energy-angle distributions 70 keV - 6.8 MeV,
+            often at 24 sec
+    startdate, enddate : {datetime or str}
+        Datetime object (e.g., dt.date(2021,12,31) or dt.datetime(2021,4,15)) or
+        "standard" datetime string (e.g., "2021/04/15") (enddate must always be
+        later than startdate)
+    path : {str}, optional
+        Local path for storing downloaded data, by default None
+
+    Returns
+    -------
+    List of downloaded files
+    """
+
+    trange = a.Time(startdate, enddate)
+    cda_dataset = a.cdaweb.Dataset(dataset)
+    try:
+        result = Fido.search(trange, cda_dataset)
+        filelist = [i[0].split('/')[-1] for i in result.show('URL')[0]]
+        filelist.sort()
+        files = filelist
+        if path is None:
+            filelist = [sunpy.config.get('downloads', 'download_dir') + os.sep + file for file in filelist]
+        elif type(path) is str:
+            filelist = [path + os.sep + f for f in filelist]
+        downloaded_files = filelist
+
+        for i, f in enumerate(filelist):
+            if os.path.exists(f) and os.path.getsize(f) == 0:
+                os.remove(f)
+            if not os.path.exists(f):
+                # downloaded_file = Fido.fetch(result[0][i], path=path, max_conn=max_conn)
+                downloaded_file = wind3dp_single_download(files[i], path=path)
+
+    except RuntimeError:
+        print(f'Unable to obtain "{dataset}" data for {startdate}-{enddate}!')
+        downloaded_files = []
+    return downloaded_files
+
+
 def _wind3dp_load(files, resample="1min", threshold=None):
     if isinstance(resample, str):
         try:
@@ -301,7 +393,7 @@ def _wind3dp_load(files, resample="1min", threshold=None):
 
 
 def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
-                 path=None, max_conn=5, threshold=None):
+                 path=None, threshold=None, **kwargs):
     """
     Load-in data for Wind/3DP instrument. Provides released data obtained by
     SunPy through CDF files from CDAWeb. Returns data as Pandas dataframe.
@@ -330,8 +422,6 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
         multiindex, by default True
     path : {str}, optional
         Local path for storing downloaded data, by default None
-    max_conn : {int}, optional
-        The number of parallel download slots used by Fido.fetch, by default 5
     threshold : {int or float}, optional
         Replace all FLUX values above 'threshold' with np.nan, by default None
 
@@ -340,7 +430,7 @@ def wind3dp_load(dataset, startdate, enddate, resample="1min", multi_index=True,
     _type_
         _description_
     """
-    files = wind3dp_download(dataset, startdate, enddate, path, max_conn)
+    files = wind3dp_download(dataset, startdate, enddate, path)
     if len(files) > 0:
         df = _wind3dp_load(files, resample, threshold)
 

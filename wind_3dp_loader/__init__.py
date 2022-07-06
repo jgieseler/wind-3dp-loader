@@ -280,6 +280,8 @@ def wind3dp_single_download(file, path=None):
     if path:
         if not path[-1] == os.sep:
             path = f'{path}{os.sep}'
+    else:
+        path = sunpy.config.get('downloads', 'download_dir') + os.sep
 
     data = file.split('_')[1]  # e.g. 'sfsp'
     year = file.split('_')[3][:4]

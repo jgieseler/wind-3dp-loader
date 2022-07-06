@@ -1,9 +1,9 @@
 wind-3dp-loader
 ===============
 
-|pytesting|
+|pytest|
 
-.. |pytesting| image:: https://github.com/jgieseler/wind-3dp-loader/workflows/pytesting/badge.svg
+.. |pytest| image:: https://github.com/jgieseler/wind-3dp-loader/workflows/pytest/badge.svg
 
 Python data loader for Wind/3DP instrument. At the moment provides released data obtained by SunPy through CDF files from CDAWeb for the following datasets:
 

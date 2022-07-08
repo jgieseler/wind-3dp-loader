@@ -56,8 +56,7 @@ Input
 -  ``resample``: Pandas frequency (e.g., ``'1min'`` or ``'1h'``), or ``None``, optional. Frequency to which the original data (~24 seconds) is resamepled. By default ``'1min'``.
 -  ``multi_index``: ``True``, or ``False`` (boolean), optional. Provide output for pitch-angle resolved data as Pandas Dataframe with multiindex. By default ``True``.
 -  ``path``: String, optional. Local path for storing downloaded data, e.g. ``path='data/wind/3dp/'``. By default `None`. Default setting saves data according to `sunpy's Fido standards <https://docs.sunpy.org/en/stable/guide/acquiring_data/fido.html#downloading-data>`_.
--  ``max_conn``: Integer of float, optional. The number of parallel download slots used by ``Fido.fetch``, by default ``5``.
--  ``threshold``: Integer, optional. Replace all FLUX values in ``df`` above ``threshold`` with ``np.nan``, by default ``None``.
+-  ``threshold``: Integer or float, optional. Replace all FLUX values in ``df`` above ``threshold`` with ``np.nan``, by default ``None``.
       
 
 Return
@@ -72,6 +71,17 @@ Data folder structure
 
 If no ``path`` argument is provided, all data files are automatically saved in a SunPy subfolder of the current user home directory.
 
+
+Flux value threshold
+--------------------
+
+If a flux ``threshold`` is defined (as integer or float), all fluxes above this value will be replaced with ``np.nan``. This might me useful if there are some 'outlier' data points. For example, see the following two figures for ``threshold=None`` and ``threshold=0.1``, respectively:
+
+|wind3dp_org|
+|wind3dp_threshold|
+
+.. |wind3dp_org| image:: https://github.com/jgieseler/wind-3dp-loader/raw/main/docs/wind3dp_org.png
+.. |wind3dp_threshold| image:: https://github.com/jgieseler/wind-3dp-loader/raw/main/docs/wind3dp_threshold.png
 
 License
 -------

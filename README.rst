@@ -19,7 +19,7 @@ This software is provided "as is", with no guarantee. It is no official data sou
 Installation
 ------------
 
-wind_3dp_loader requires python >= 3.7 and SunPy >= 4.0.0
+wind_3dp_loader requires python >= 3.8 and SunPy >= 4.0.0
 
 It can be installed from this repository using pip:
 

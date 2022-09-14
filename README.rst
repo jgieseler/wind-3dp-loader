@@ -55,7 +55,7 @@ Input
 -  ``startdate``, ``enddate``: datetime object or "standard" datetime string
 -  ``resample``: Pandas frequency (e.g., ``'1min'`` or ``'1h'``), or ``None``, optional. Frequency to which the original data (~24 seconds) is resamepled. By default ``'1min'``.
 -  ``multi_index``: ``True``, or ``False`` (boolean), optional. Provide output for pitch-angle resolved data as Pandas Dataframe with multiindex. By default ``True``.
--  ``path``: String, optional. Local path for storing downloaded data, e.g. ``path='data/wind/3dp/'``. By default `None`. Default setting saves data according to `sunpy's Fido standards <https://docs.sunpy.org/en/stable/guide/acquiring_data/fido.html#downloading-data>`_.
+-  ``path``: String, optional. Local path for storing downloaded data, e.g. ``path='data/wind/3dp/'``. By default `None`. Default setting saves data according to `sunpy's Fido standards <https://docs.sunpy.org/en/stable/guide/acquiring_data/fido.html#downloading-data>`_. The default setting can be changed according to the corresponding `sunpy documentation <https://docs.sunpy.org/en/stable/guide/customization.html>`_, where the setting that needs to be changed is named ``download_dir`` (e.g., one could set it to a shared directory on a multi-user system).
 -  ``threshold``: Integer or float, optional. Replace all FLUX values in ``df`` above ``threshold`` with ``np.nan``, by default ``None``.
       
 

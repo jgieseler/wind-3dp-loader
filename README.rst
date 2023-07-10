@@ -1,3 +1,6 @@
+This package is not maintained any more! Please use https://github.com/serpentine-h2020/SEPpy instead!
+======================================================================================================
+
 wind-3dp-loader
 ===============
 
@@ -16,18 +19,6 @@ Disclaimer
 ----------
 This software is provided "as is", with no guarantee. It is no official data source, and not officially endorsed by the corresponding instrument teams. Please always refer to the instrument descriptions before using the data!
 
-Installation
-------------
-
-wind_3dp_loader requires python >= 3.8 and SunPy >= 4.0.0
-
-It can be installed from this repository using pip:
-
-.. code:: bash
-
-    pip install git+https://github.com/jgieseler/wind-3dp-loader
-
-**Note:** Windows users might `need to install git <https://github.com/git-guides/install-git>`_ for this to work!
 
 Usage
 -----
